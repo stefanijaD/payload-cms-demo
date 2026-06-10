@@ -9,6 +9,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Instructions } from './collections/Instructions'
 import { SharedSteps } from './collections/SharedSteps'
+import { SharedStepGroups } from './collections/SharedStepGroups'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -20,9 +21,26 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Instructions, SharedSteps],
+  collections: [Users, Media, Instructions, SharedSteps, SharedStepGroups],
   localization: {
-    locales: ['en', 'es', 'nl'],
+    locales: [
+      { label: 'Czech', code: 'cs' },
+      { label: 'Danish', code: 'da' },
+      { label: 'German', code: 'de' },
+      { label: 'English', code: 'en' },
+      { label: 'Spanish', code: 'es' },
+      { label: 'French', code: 'fr' },
+      { label: 'Hungarian', code: 'hu' },
+      { label: 'Italian', code: 'it' },
+      { label: 'Korean', code: 'ko' },
+      { label: 'Dutch', code: 'nl' },
+      { label: 'Norwegian', code: 'no' },
+      { label: 'Polish', code: 'pl' },
+      { label: 'Portuguese', code: 'pt' },
+      { label: 'Slovak', code: 'sk' },
+      { label: 'Swedish', code: 'sv' },
+      { label: 'Chinese', code: 'zh' },
+    ],
     defaultLocale: 'en',
     fallback: true,
   },

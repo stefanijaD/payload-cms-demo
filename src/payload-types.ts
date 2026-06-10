@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     instructions: Instruction;
     'shared-steps': SharedStep;
+    'shared-step-groups': SharedStepGroup;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     instructions: InstructionsSelect<false> | InstructionsSelect<true>;
     'shared-steps': SharedStepsSelect<false> | SharedStepsSelect<true>;
+    'shared-step-groups': SharedStepGroupsSelect<false> | SharedStepGroupsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -90,10 +92,15 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'es' | 'nl') | ('en' | 'es' | 'nl')[];
+  fallbackLocale:
+    | ('false' | 'none' | 'null')
+    | false
+    | null
+    | ('cs' | 'da' | 'de' | 'en' | 'es' | 'fr' | 'hu' | 'it' | 'ko' | 'nl' | 'no' | 'pl' | 'pt' | 'sk' | 'sv' | 'zh')
+    | ('cs' | 'da' | 'de' | 'en' | 'es' | 'fr' | 'hu' | 'it' | 'ko' | 'nl' | 'no' | 'pl' | 'pt' | 'sk' | 'sv' | 'zh')[];
   globals: {};
   globalsSelect: {};
-  locale: 'en' | 'es' | 'nl';
+  locale: 'cs' | 'da' | 'de' | 'en' | 'es' | 'fr' | 'hu' | 'it' | 'ko' | 'nl' | 'no' | 'pl' | 'pt' | 'sk' | 'sv' | 'zh';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -172,16 +179,105 @@ export interface Media {
 export interface Instruction {
   id: number;
   phoneModel: string;
-  description?: string | null;
-  steps?:
-    | {
-        stepDescription: string;
-        stepImage?: (number | null) | Media;
+  instructionType: 'activate' | 'connect';
+  activate?: {
+    /**
+     * Optional short/base instructions for the activate screen.
+     */
+    base?:
+      | {
+          source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+          inline?: {
+            /**
+             * Optional step title/name.
+             */
+            name?: string | null;
+            description: string;
+            /**
+             * Optional image, GIF, or video.
+             */
+            media?: (number | null) | Media;
+          };
+          sharedStep?: (number | null) | SharedStep;
+          sharedStepGroup?: (number | null) | SharedStepGroup;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Detailed instructions shown when the user opens detailed instructions.
+     */
+    detailed: {
+      source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+      inline?: {
+        /**
+         * Optional step title/name.
+         */
+        name?: string | null;
+        description: string;
+        /**
+         * Optional image, GIF, or video.
+         */
+        media?: (number | null) | Media;
+      };
+      sharedStep?: (number | null) | SharedStep;
+      sharedStepGroup?: (number | null) | SharedStepGroup;
+      id?: string | null;
+    }[];
+  };
+  connect?: {
+    /**
+     * Add one item for each connect substep.
+     */
+    subSteps: {
+      /**
+       * Select which connect substep these instructions belong to.
+       */
+      key: 'rename' | 'turn_on' | 'roaming';
+      /**
+       * Short instructions shown directly on this substep screen.
+       */
+      base?:
+        | {
+            source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+            inline?: {
+              /**
+               * Optional step title/name.
+               */
+              name?: string | null;
+              description: string;
+              /**
+               * Optional image, GIF, or video.
+               */
+              media?: (number | null) | Media;
+            };
+            sharedStep?: (number | null) | SharedStep;
+            sharedStepGroup?: (number | null) | SharedStepGroup;
+            id?: string | null;
+          }[]
+        | null;
+      /**
+       * Detailed instructions for this substep. Use shared steps/groups if this content is reused.
+       */
+      detailed: {
+        source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+        inline?: {
+          /**
+           * Optional step title/name.
+           */
+          name?: string | null;
+          description: string;
+          /**
+           * Optional image, GIF, or video.
+           */
+          media?: (number | null) | Media;
+        };
+        sharedStep?: (number | null) | SharedStep;
+        sharedStepGroup?: (number | null) | SharedStepGroup;
         id?: string | null;
-      }[]
-    | null;
-  instructionType: 'installation' | 'activation';
-  sharedSteps?: (number | SharedStep)[] | null;
+      }[];
+      id?: string | null;
+    }[];
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -191,9 +287,41 @@ export interface Instruction {
  */
 export interface SharedStep {
   id: number;
-  title: string;
-  stepDescription?: string | null;
-  stepImage?: (number | null) | Media;
+  /**
+   * Internal name used only in Payload to identify this reusable step.
+   */
+  internalName: string;
+  usageType: 'base' | 'detailed' | 'both';
+  /**
+   * Optional visible step title/name.
+   */
+  name?: string | null;
+  description: string;
+  /**
+   * Optional image, GIF, or video.
+   */
+  media?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shared-step-groups".
+ */
+export interface SharedStepGroup {
+  id: number;
+  /**
+   * Internal name used only in Payload to identify this reusable step group.
+   */
+  internalName: string;
+  /**
+   * Optional description for editors.
+   */
+  description?: string | null;
+  steps: {
+    step: number | SharedStep;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -236,6 +364,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'shared-steps';
         value: number | SharedStep;
+      } | null)
+    | ({
+        relationTo: 'shared-step-groups';
+        value: number | SharedStepGroup;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -325,16 +457,81 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface InstructionsSelect<T extends boolean = true> {
   phoneModel?: T;
-  description?: T;
-  steps?:
+  instructionType?: T;
+  activate?:
     | T
     | {
-        stepDescription?: T;
-        stepImage?: T;
-        id?: T;
+        base?:
+          | T
+          | {
+              source?: T;
+              inline?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    media?: T;
+                  };
+              sharedStep?: T;
+              sharedStepGroup?: T;
+              id?: T;
+            };
+        detailed?:
+          | T
+          | {
+              source?: T;
+              inline?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    media?: T;
+                  };
+              sharedStep?: T;
+              sharedStepGroup?: T;
+              id?: T;
+            };
       };
-  instructionType?: T;
-  sharedSteps?: T;
+  connect?:
+    | T
+    | {
+        subSteps?:
+          | T
+          | {
+              key?: T;
+              base?:
+                | T
+                | {
+                    source?: T;
+                    inline?:
+                      | T
+                      | {
+                          name?: T;
+                          description?: T;
+                          media?: T;
+                        };
+                    sharedStep?: T;
+                    sharedStepGroup?: T;
+                    id?: T;
+                  };
+              detailed?:
+                | T
+                | {
+                    source?: T;
+                    inline?:
+                      | T
+                      | {
+                          name?: T;
+                          description?: T;
+                          media?: T;
+                        };
+                    sharedStep?: T;
+                    sharedStepGroup?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -343,9 +540,27 @@ export interface InstructionsSelect<T extends boolean = true> {
  * via the `definition` "shared-steps_select".
  */
 export interface SharedStepsSelect<T extends boolean = true> {
-  title?: T;
-  stepDescription?: T;
-  stepImage?: T;
+  internalName?: T;
+  usageType?: T;
+  name?: T;
+  description?: T;
+  media?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shared-step-groups_select".
+ */
+export interface SharedStepGroupsSelect<T extends boolean = true> {
+  internalName?: T;
+  description?: T;
+  steps?:
+    | T
+    | {
+        step?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
