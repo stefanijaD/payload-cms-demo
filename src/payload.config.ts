@@ -20,6 +20,14 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    components: {
+      afterNavLinks: [
+        {
+          path: '/components/PreviewNavLink',
+          exportName: 'PreviewNavLink',
+        },
+      ]
+    }
   },
   collections: [Users, Media, Instructions, SharedSteps, SharedStepGroups],
   localization: {
