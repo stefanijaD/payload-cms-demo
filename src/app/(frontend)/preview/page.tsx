@@ -61,10 +61,11 @@ async function IndexPage() {
     depth: 0,
   })
 
-  const grouped: Record<string, { instructionType: string }[]> = {}
+  const grouped: Record<string, { instructionType: string; label: string }[]> = {}
   for (const doc of result.docs as any[]) {
-    if (!grouped[doc.phoneModel]) grouped[doc.phoneModel] = []
-    grouped[doc.phoneModel].push({ instructionType: doc.instructionType })
+    const key = (doc.phoneModel as string).toLowerCase().replace(/\s+/g, '')
+    if (!grouped[key]) grouped[key] = []
+    grouped[key].push({ instructionType: doc.instructionType, label: doc.phoneModel })
   }
   const models = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b))
 
@@ -76,10 +77,10 @@ async function IndexPage() {
           {models.length} phone model{models.length !== 1 ? 's' : ''}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {models.map(([model, docs]) => (
+          {models.map(([key, docs]) => (
             <a
-              key={model}
-              href={`/preview?model=${encodeURIComponent(model)}&locale=en`}
+              key={key}
+              href={`/preview?model=${encodeURIComponent(docs[0].label)}&locale=en`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -92,7 +93,7 @@ async function IndexPage() {
                 color: 'inherit',
               }}
             >
-              <span style={{ fontWeight: 600, fontSize: '0.9rem', flex: 1, color: '#111' }}>{model}</span>
+              <span style={{ fontWeight: 600, fontSize: '0.9rem', flex: 1, color: '#111' }}>{docs[0].label}</span>
               <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
                 {docs.map((d, i) => (
                   <span key={i} style={typeBadgeStyle(d.instructionType)}>{d.instructionType}</span>
