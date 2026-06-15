@@ -150,30 +150,38 @@ export async function GET(request: Request) {
     }
 
     if (type === 'activate') {
+        const activate = instruction.activate
+
+        const subSteps =
+            activate?.subSteps?.map((subStep: any) => ({
+                key: subStep.key,
+                base: normalizeStepList(subStep.base),
+                detailed: normalizeStepList(subStep.detailed),
+            })) ?? []
+
         return Response.json({
             id: instruction.id,
             phoneModel: instruction.phoneModel,
             instructionType: instruction.instructionType,
             content: {
-                base: normalizeStepList(instruction.activate?.base),
-                detailed: normalizeStepList(instruction.activate?.detailed),
+                base: normalizeStepList(activate?.base),
+                detailed: normalizeStepList(activate?.detailed),
+                subSteps,
+                manualInstallation: {
+                    base: normalizeStepList(activate?.manualInstallation?.base),
+                    detailed: normalizeStepList(activate?.manualInstallation?.detailed),
+                },
             },
         })
     }
-
-    const subSteps =
-        instruction.connect?.subSteps?.map((subStep: any) => ({
-            key: subStep.key,
-            base: normalizeStepList(subStep.base),
-            detailed: normalizeStepList(subStep.detailed),
-        })) ?? []
 
     return Response.json({
         id: instruction.id,
         phoneModel: instruction.phoneModel,
         instructionType: instruction.instructionType,
         content: {
-            subSteps,
+            base: normalizeStepList(instruction.connect?.base),
+            detailed: normalizeStepList(instruction.connect?.detailed),
         },
     })
 }
