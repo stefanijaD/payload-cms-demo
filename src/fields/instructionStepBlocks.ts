@@ -34,11 +34,31 @@ export const instructionStepBlocks: Field[] = [
                 required: true,
             },
             {
+                name: 'mediaTranslatable',
+                type: 'checkbox',
+                defaultValue: false,
+                label: 'Use locale-specific media',
+                admin: {
+                    description: 'Enable to set a different image/video per locale.',
+                },
+            },
+            {
                 name: 'media',
                 type: 'upload',
                 relationTo: 'media',
                 admin: {
-                    description: 'Optional image, GIF, or video.',
+                    description: 'Optional image, GIF, or video (same for all locales).',
+                    condition: (_, siblingData) => !siblingData?.mediaTranslatable,
+                },
+            },
+            {
+                name: 'mediaLocalized',
+                type: 'upload',
+                relationTo: 'media',
+                localized: true,
+                admin: {
+                    description: 'Optional image, GIF, or video — set per locale.',
+                    condition: (_, siblingData) => !!siblingData?.mediaTranslatable,
                 },
             },
         ],

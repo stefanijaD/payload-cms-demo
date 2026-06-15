@@ -6,12 +6,12 @@ import { DetailedToggle } from './DetailedToggle'
 import { SubStepNavigator, type NormalizedSubStep } from './SubStepNavigator'
 
 type Props = {
-  activate?: { base: NormalizedStep[]; detailed: NormalizedStep[] }
-  connectSubSteps?: NormalizedSubStep[]
+  activate?: { base: NormalizedStep[]; detailed: NormalizedStep[]; subSteps: NormalizedSubStep[] }
+  connect?: { base: NormalizedStep[]; detailed: NormalizedStep[] }
 }
 
-export function InstructionTypeTabs({ activate, connectSubSteps }: Props) {
-  const hasBoth = !!activate && !!connectSubSteps?.length
+export function InstructionTypeTabs({ activate, connect }: Props) {
+  const hasBoth = !!activate && !!connect
   const [active, setActive] = useState<'activate' | 'connect'>(activate ? 'activate' : 'connect')
 
   const tabStyle = (type: 'activate' | 'connect'): React.CSSProperties => {
@@ -45,11 +45,15 @@ export function InstructionTypeTabs({ activate, connectSubSteps }: Props) {
         <>
           <StepList steps={activate.base} />
           <DetailedToggle steps={activate.detailed} />
+          {activate.subSteps.length > 0 && <SubStepNavigator subSteps={activate.subSteps} />}
         </>
       )}
 
-      {active === 'connect' && connectSubSteps?.length && (
-        <SubStepNavigator subSteps={connectSubSteps} />
+      {active === 'connect' && connect && (
+        <>
+          <StepList steps={connect.base} />
+          <DetailedToggle steps={connect.detailed} />
+        </>
       )}
     </div>
   )

@@ -17,6 +17,17 @@ export const Instructions: CollectionConfig = {
       required: true,
     },
     {
+      name: 'platform',
+      type: 'select',
+      required: true,
+      defaultValue: 'both',
+      options: [
+        { label: 'Mobile', value: 'mobile' },
+        { label: 'Web App', value: 'webapp' },
+        { label: 'Both', value: 'both' },
+      ],
+    },
+    {
       name: 'instructionType',
       type: 'select',
       required: true,
@@ -50,22 +61,37 @@ export const Instructions: CollectionConfig = {
           },
           fields: instructionStepBlocks,
         },
-      ],
-    },
-
-    {
-      name: 'connect',
-      type: 'group',
-      admin: {
-        condition: (data) => data?.instructionType === 'connect',
-      },
-      fields: [
+        {
+          name: 'manualInstallation',
+          type: 'group',
+          admin: {
+            description: 'Fallback steps shown to the user if automatic activation fails.',
+          },
+          fields: [
+            {
+              name: 'base',
+              type: 'array',
+              admin: {
+                description: 'Short/base instructions for the manual installation screen.',
+              },
+              fields: instructionStepBlocks,
+            },
+            {
+              name: 'detailed',
+              type: 'array',
+              admin: {
+                description: 'Detailed instructions for manual installation.',
+              },
+              fields: instructionStepBlocks,
+            },
+          ],
+        },
         {
           name: 'subSteps',
           type: 'array',
           required: true,
           admin: {
-            description: 'Add one item for each connect substep.',
+            description: 'Add one item for each activate substep.',
           },
           fields: [
             {
@@ -78,7 +104,7 @@ export const Instructions: CollectionConfig = {
                 { label: 'Roaming', value: 'roaming' },
               ],
               admin: {
-                description: 'Select which connect substep these instructions belong to.',
+                description: 'Select which activate substep these instructions belong to.',
               },
             },
             {
@@ -100,6 +126,33 @@ export const Instructions: CollectionConfig = {
               fields: instructionStepBlocks,
             },
           ],
+        },
+      ],
+    },
+
+    {
+      name: 'connect',
+      type: 'group',
+      admin: {
+        condition: (data) => data?.instructionType === 'connect',
+      },
+      fields: [
+        {
+          name: 'base',
+          type: 'array',
+          admin: {
+            description: 'Optional short/base instructions for the connect screen.',
+          },
+          fields: instructionStepBlocks,
+        },
+        {
+          name: 'detailed',
+          type: 'array',
+          required: true,
+          admin: {
+            description: 'Detailed instructions shown when the user opens detailed instructions.',
+          },
+          fields: instructionStepBlocks,
         },
       ],
     }

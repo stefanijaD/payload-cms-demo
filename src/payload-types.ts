@@ -179,6 +179,7 @@ export interface Media {
 export interface Instruction {
   id: number;
   phoneModel: string;
+  platform: 'mobile' | 'webapp' | 'both';
   instructionType: 'activate' | 'connect';
   activate?: {
     /**
@@ -194,9 +195,17 @@ export interface Instruction {
             name?: string | null;
             description: string;
             /**
-             * Optional image, GIF, or video.
+             * Enable to set a different image/video per locale.
+             */
+            mediaTranslatable?: boolean | null;
+            /**
+             * Optional image, GIF, or video (same for all locales).
              */
             media?: (number | null) | Media;
+            /**
+             * Optional image, GIF, or video — set per locale.
+             */
+            mediaLocalized?: (number | null) | Media;
           };
           sharedStep?: (number | null) | SharedStep;
           sharedStepGroup?: (number | null) | SharedStepGroup;
@@ -215,22 +224,93 @@ export interface Instruction {
         name?: string | null;
         description: string;
         /**
-         * Optional image, GIF, or video.
+         * Enable to set a different image/video per locale.
+         */
+        mediaTranslatable?: boolean | null;
+        /**
+         * Optional image, GIF, or video (same for all locales).
          */
         media?: (number | null) | Media;
+        /**
+         * Optional image, GIF, or video — set per locale.
+         */
+        mediaLocalized?: (number | null) | Media;
       };
       sharedStep?: (number | null) | SharedStep;
       sharedStepGroup?: (number | null) | SharedStepGroup;
       id?: string | null;
     }[];
-  };
-  connect?: {
     /**
-     * Add one item for each connect substep.
+     * Fallback steps shown to the user if automatic activation fails.
+     */
+    manualInstallation?: {
+      /**
+       * Short/base instructions for the manual installation screen.
+       */
+      base?:
+        | {
+            source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+            inline?: {
+              /**
+               * Optional step title/name.
+               */
+              name?: string | null;
+              description: string;
+              /**
+               * Enable to set a different image/video per locale.
+               */
+              mediaTranslatable?: boolean | null;
+              /**
+               * Optional image, GIF, or video (same for all locales).
+               */
+              media?: (number | null) | Media;
+              /**
+               * Optional image, GIF, or video — set per locale.
+               */
+              mediaLocalized?: (number | null) | Media;
+            };
+            sharedStep?: (number | null) | SharedStep;
+            sharedStepGroup?: (number | null) | SharedStepGroup;
+            id?: string | null;
+          }[]
+        | null;
+      /**
+       * Detailed instructions for manual installation.
+       */
+      detailed?:
+        | {
+            source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+            inline?: {
+              /**
+               * Optional step title/name.
+               */
+              name?: string | null;
+              description: string;
+              /**
+               * Enable to set a different image/video per locale.
+               */
+              mediaTranslatable?: boolean | null;
+              /**
+               * Optional image, GIF, or video (same for all locales).
+               */
+              media?: (number | null) | Media;
+              /**
+               * Optional image, GIF, or video — set per locale.
+               */
+              mediaLocalized?: (number | null) | Media;
+            };
+            sharedStep?: (number | null) | SharedStep;
+            sharedStepGroup?: (number | null) | SharedStepGroup;
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * Add one item for each activate substep.
      */
     subSteps: {
       /**
-       * Select which connect substep these instructions belong to.
+       * Select which activate substep these instructions belong to.
        */
       key: 'rename' | 'turn_on' | 'roaming';
       /**
@@ -246,9 +326,17 @@ export interface Instruction {
               name?: string | null;
               description: string;
               /**
-               * Optional image, GIF, or video.
+               * Enable to set a different image/video per locale.
+               */
+              mediaTranslatable?: boolean | null;
+              /**
+               * Optional image, GIF, or video (same for all locales).
                */
               media?: (number | null) | Media;
+              /**
+               * Optional image, GIF, or video — set per locale.
+               */
+              mediaLocalized?: (number | null) | Media;
             };
             sharedStep?: (number | null) | SharedStep;
             sharedStepGroup?: (number | null) | SharedStepGroup;
@@ -267,14 +355,82 @@ export interface Instruction {
           name?: string | null;
           description: string;
           /**
-           * Optional image, GIF, or video.
+           * Enable to set a different image/video per locale.
+           */
+          mediaTranslatable?: boolean | null;
+          /**
+           * Optional image, GIF, or video (same for all locales).
            */
           media?: (number | null) | Media;
+          /**
+           * Optional image, GIF, or video — set per locale.
+           */
+          mediaLocalized?: (number | null) | Media;
         };
         sharedStep?: (number | null) | SharedStep;
         sharedStepGroup?: (number | null) | SharedStepGroup;
         id?: string | null;
       }[];
+      id?: string | null;
+    }[];
+  };
+  connect?: {
+    /**
+     * Optional short/base instructions for the connect screen.
+     */
+    base?:
+      | {
+          source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+          inline?: {
+            /**
+             * Optional step title/name.
+             */
+            name?: string | null;
+            description: string;
+            /**
+             * Enable to set a different image/video per locale.
+             */
+            mediaTranslatable?: boolean | null;
+            /**
+             * Optional image, GIF, or video (same for all locales).
+             */
+            media?: (number | null) | Media;
+            /**
+             * Optional image, GIF, or video — set per locale.
+             */
+            mediaLocalized?: (number | null) | Media;
+          };
+          sharedStep?: (number | null) | SharedStep;
+          sharedStepGroup?: (number | null) | SharedStepGroup;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Detailed instructions shown when the user opens detailed instructions.
+     */
+    detailed: {
+      source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+      inline?: {
+        /**
+         * Optional step title/name.
+         */
+        name?: string | null;
+        description: string;
+        /**
+         * Enable to set a different image/video per locale.
+         */
+        mediaTranslatable?: boolean | null;
+        /**
+         * Optional image, GIF, or video (same for all locales).
+         */
+        media?: (number | null) | Media;
+        /**
+         * Optional image, GIF, or video — set per locale.
+         */
+        mediaLocalized?: (number | null) | Media;
+      };
+      sharedStep?: (number | null) | SharedStep;
+      sharedStepGroup?: (number | null) | SharedStepGroup;
       id?: string | null;
     }[];
   };
@@ -298,9 +454,17 @@ export interface SharedStep {
   name?: string | null;
   description: string;
   /**
-   * Optional image, GIF, or video.
+   * Enable to set a different image/video per locale.
+   */
+  mediaTranslatable?: boolean | null;
+  /**
+   * Optional image, GIF, or video (same for all locales).
    */
   media?: (number | null) | Media;
+  /**
+   * Optional image, GIF, or video — set per locale.
+   */
+  mediaLocalized?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -457,6 +621,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface InstructionsSelect<T extends boolean = true> {
   phoneModel?: T;
+  platform?: T;
   instructionType?: T;
   activate?:
     | T
@@ -470,7 +635,9 @@ export interface InstructionsSelect<T extends boolean = true> {
                 | {
                     name?: T;
                     description?: T;
+                    mediaTranslatable?: T;
                     media?: T;
+                    mediaLocalized?: T;
                   };
               sharedStep?: T;
               sharedStepGroup?: T;
@@ -485,20 +652,17 @@ export interface InstructionsSelect<T extends boolean = true> {
                 | {
                     name?: T;
                     description?: T;
+                    mediaTranslatable?: T;
                     media?: T;
+                    mediaLocalized?: T;
                   };
               sharedStep?: T;
               sharedStepGroup?: T;
               id?: T;
             };
-      };
-  connect?:
-    | T
-    | {
-        subSteps?:
+        manualInstallation?:
           | T
           | {
-              key?: T;
               base?:
                 | T
                 | {
@@ -508,7 +672,9 @@ export interface InstructionsSelect<T extends boolean = true> {
                       | {
                           name?: T;
                           description?: T;
+                          mediaTranslatable?: T;
                           media?: T;
+                          mediaLocalized?: T;
                         };
                     sharedStep?: T;
                     sharedStepGroup?: T;
@@ -523,12 +689,91 @@ export interface InstructionsSelect<T extends boolean = true> {
                       | {
                           name?: T;
                           description?: T;
+                          mediaTranslatable?: T;
                           media?: T;
+                          mediaLocalized?: T;
                         };
                     sharedStep?: T;
                     sharedStepGroup?: T;
                     id?: T;
                   };
+            };
+        subSteps?:
+          | T
+          | {
+              key?: T;
+              base?:
+                | T
+                | {
+                    source?: T;
+                    inline?:
+                      | T
+                      | {
+                          name?: T;
+                          description?: T;
+                          mediaTranslatable?: T;
+                          media?: T;
+                          mediaLocalized?: T;
+                        };
+                    sharedStep?: T;
+                    sharedStepGroup?: T;
+                    id?: T;
+                  };
+              detailed?:
+                | T
+                | {
+                    source?: T;
+                    inline?:
+                      | T
+                      | {
+                          name?: T;
+                          description?: T;
+                          mediaTranslatable?: T;
+                          media?: T;
+                          mediaLocalized?: T;
+                        };
+                    sharedStep?: T;
+                    sharedStepGroup?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  connect?:
+    | T
+    | {
+        base?:
+          | T
+          | {
+              source?: T;
+              inline?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    mediaTranslatable?: T;
+                    media?: T;
+                    mediaLocalized?: T;
+                  };
+              sharedStep?: T;
+              sharedStepGroup?: T;
+              id?: T;
+            };
+        detailed?:
+          | T
+          | {
+              source?: T;
+              inline?:
+                | T
+                | {
+                    name?: T;
+                    description?: T;
+                    mediaTranslatable?: T;
+                    media?: T;
+                    mediaLocalized?: T;
+                  };
+              sharedStep?: T;
+              sharedStepGroup?: T;
               id?: T;
             };
       };
@@ -544,7 +789,9 @@ export interface SharedStepsSelect<T extends boolean = true> {
   usageType?: T;
   name?: T;
   description?: T;
+  mediaTranslatable?: T;
   media?: T;
+  mediaLocalized?: T;
   updatedAt?: T;
   createdAt?: T;
 }

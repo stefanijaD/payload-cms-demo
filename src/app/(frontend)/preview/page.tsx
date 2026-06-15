@@ -11,15 +11,20 @@ function normalizeMedia(media: any) {
   return { url: media.url ?? null, width: media.width ?? null, height: media.height ?? null }
 }
 
+function resolveMedia(obj: any) {
+  if (!obj) return null
+  return obj.mediaTranslatable ? obj.mediaLocalized : obj.media
+}
+
 function normalizeSharedStep(step: any): NormalizedStep | null {
   if (!step || typeof step === 'number') return null
-  return { name: step.name ?? null, description: step.description ?? null, media: normalizeMedia(step.media) }
+  return { name: step.name ?? null, description: step.description ?? null, media: normalizeMedia(resolveMedia(step)) }
 }
 
 function normalizeStepItem(item: any): NormalizedStep[] {
   if (!item) return []
   if (item.source === 'inline') {
-    return [{ name: item.inline?.name ?? null, description: item.inline?.description ?? null, media: normalizeMedia(item.inline?.media) }]
+    return [{ name: item.inline?.name ?? null, description: item.inline?.description ?? null, media: normalizeMedia(resolveMedia(item.inline)) }]
   }
   if (item.source === 'sharedStep') {
     const step = normalizeSharedStep(item.sharedStep)
@@ -134,7 +139,7 @@ async function ModelPage({ model, locale }: { model: string; locale: string }) {
   const activate = (result.docs as any[]).find((d) => d.instructionType === 'activate')
   const connect = (result.docs as any[]).find((d) => d.instructionType === 'connect')
 
-  const connectSubSteps: NormalizedSubStep[] = (connect?.connect?.subSteps ?? []).map((ss: any) => ({
+  const activateSubSteps: NormalizedSubStep[] = (activate?.activate?.subSteps ?? []).map((ss: any) => ({
     key: ss.key,
     base: normalizeStepList(ss.base),
     detailed: normalizeStepList(ss.detailed),
@@ -158,8 +163,12 @@ async function ModelPage({ model, locale }: { model: string; locale: string }) {
           activate={activate ? {
             base: normalizeStepList(activate.activate?.base),
             detailed: normalizeStepList(activate.activate?.detailed),
+            subSteps: activateSubSteps,
           } : undefined}
-          connectSubSteps={connectSubSteps.length > 0 ? connectSubSteps : undefined}
+          connect={connect ? {
+            base: normalizeStepList(connect.connect?.base),
+            detailed: normalizeStepList(connect.connect?.detailed),
+          } : undefined}
         />
       </div>
     </div>
