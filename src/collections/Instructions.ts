@@ -46,6 +46,7 @@ export const Instructions: CollectionConfig = {
       fields: [
         {
           name: 'base',
+          dbName: 'act_base',
           type: 'array',
           admin: {
             description: 'Optional short/base instructions for the activate screen.',
@@ -54,10 +55,12 @@ export const Instructions: CollectionConfig = {
         },
         {
           name: 'detailed',
+          dbName: 'act_detail',
           type: 'array',
           required: true,
           admin: {
-            description: 'Detailed instructions shown when the user opens detailed instructions.',
+            description:
+              'Detailed instructions shown when the user opens detailed instructions.',
           },
           fields: instructionStepBlocks,
         },
@@ -65,19 +68,23 @@ export const Instructions: CollectionConfig = {
           name: 'manualInstallation',
           type: 'group',
           admin: {
-            description: 'Fallback steps shown to the user if automatic activation fails.',
+            description:
+              'Fallback steps shown to the user if automatic activation fails.',
           },
           fields: [
             {
               name: 'base',
+              dbName: 'act_manual_base',
               type: 'array',
               admin: {
-                description: 'Short/base instructions for the manual installation screen.',
+                description:
+                  'Short/base instructions for the manual installation screen.',
               },
               fields: instructionStepBlocks,
             },
             {
               name: 'detailed',
+              dbName: 'act_manual_detail',
               type: 'array',
               admin: {
                 description: 'Detailed instructions for manual installation.',
@@ -88,6 +95,7 @@ export const Instructions: CollectionConfig = {
         },
         {
           name: 'subSteps',
+          dbName: 'act_substeps',
           type: 'array',
           required: true,
           admin: {
@@ -104,19 +112,23 @@ export const Instructions: CollectionConfig = {
                 { label: 'Roaming', value: 'roaming' },
               ],
               admin: {
-                description: 'Select which activate substep these instructions belong to.',
+                description:
+                  'Select which activate substep these instructions belong to.',
               },
             },
             {
               name: 'base',
+              dbName: 'act_sub_base',
               type: 'array',
               admin: {
-                description: 'Short instructions shown directly on this substep screen.',
+                description:
+                  'Short instructions shown directly on this substep screen.',
               },
               fields: instructionStepBlocks,
             },
             {
               name: 'detailed',
+              dbName: 'act_sub_detail',
               type: 'array',
               required: true,
               admin: {
@@ -139,6 +151,7 @@ export const Instructions: CollectionConfig = {
       fields: [
         {
           name: 'base',
+          dbName: 'conn_base',
           type: 'array',
           admin: {
             description: 'Optional short/base instructions for the connect screen.',
@@ -147,14 +160,17 @@ export const Instructions: CollectionConfig = {
         },
         {
           name: 'detailed',
+          dbName: 'conn_detail',
           type: 'array',
           required: true,
           admin: {
-            description: 'Detailed instructions shown when the user opens detailed instructions.',
+            description:
+              'Detailed instructions shown when the user opens detailed instructions.',
           },
           fields: instructionStepBlocks,
         },
       ],
-    }
+    },
   ],
 }
+
