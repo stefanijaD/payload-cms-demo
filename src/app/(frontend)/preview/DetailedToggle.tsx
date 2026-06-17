@@ -20,7 +20,6 @@ export function DetailedToggle({ steps }: { steps: NormalizedStep[] }) {
           padding: '0.65rem 0',
           background: 'none',
           border: 'none',
-          borderTop: '1px solid #e5e7eb',
           cursor: 'pointer',
           fontSize: '0.8rem',
           fontWeight: 600,

@@ -145,6 +145,11 @@ async function ModelPage({ model, locale }: { model: string; locale: string }) {
     detailed: normalizeStepList(ss.detailed),
   }))
 
+  const activateManual = activate ? {
+    base: normalizeStepList((activate.activate as any)?.manualInstallation?.base),
+    detailed: normalizeStepList((activate.activate as any)?.manualInstallation?.detailed),
+  } : undefined
+
   return (
     <div style={pageStyle}>
       <div style={innerStyle}>
@@ -164,6 +169,7 @@ async function ModelPage({ model, locale }: { model: string; locale: string }) {
             base: normalizeStepList(activate.activate?.base),
             detailed: normalizeStepList(activate.activate?.detailed),
             subSteps: activateSubSteps,
+            manual: activateManual,
           } : undefined}
           connect={connect ? {
             base: normalizeStepList(connect.connect?.base),

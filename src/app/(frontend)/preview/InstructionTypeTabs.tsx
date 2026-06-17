@@ -6,8 +6,36 @@ import { DetailedToggle } from './DetailedToggle'
 import { SubStepNavigator, type NormalizedSubStep } from './SubStepNavigator'
 
 type Props = {
-  activate?: { base: NormalizedStep[]; detailed: NormalizedStep[]; subSteps: NormalizedSubStep[] }
+  activate?: {
+    base: NormalizedStep[]
+    detailed: NormalizedStep[]
+    subSteps: NormalizedSubStep[]
+    manual?: { base: NormalizedStep[]; detailed: NormalizedStep[] }
+  }
   connect?: { base: NormalizedStep[]; detailed: NormalizedStep[] }
+}
+
+function SectionDivider({ label, accent }: { label: string; accent: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '2rem 0 1.25rem' }}>
+      <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }} />
+      <span style={{
+        fontSize: '0.65rem',
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        letterSpacing: '0.1em',
+        color: accent,
+        background: '#f3f4f6',
+        padding: '0.2rem 0.6rem',
+        borderRadius: '4px',
+        border: `1px solid ${accent}33`,
+        whiteSpace: 'nowrap',
+      }}>
+        {label}
+      </span>
+      <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }} />
+    </div>
+  )
 }
 
 export function InstructionTypeTabs({ activate, connect }: Props) {
@@ -43,16 +71,52 @@ export function InstructionTypeTabs({ activate, connect }: Props) {
 
       {active === 'activate' && activate && (
         <>
-          <StepList steps={activate.base} />
-          <DetailedToggle steps={activate.detailed} />
-          {activate.subSteps.length > 0 && <SubStepNavigator subSteps={activate.subSteps} />}
+          {activate.base.length > 0 && (
+            <>
+              <SectionDivider label="Base Steps" accent="#2563eb" />
+              <StepList steps={activate.base} />
+            </>
+          )}
+
+          {activate.detailed.length > 0 && (
+            <>
+              <SectionDivider label="Detailed Steps" accent="#6366f1" />
+              <DetailedToggle steps={activate.detailed} />
+            </>
+          )}
+
+          {activate.subSteps.length > 0 && (
+            <>
+              <SectionDivider label="Sub-steps" accent="#7c3aed" />
+              <SubStepNavigator subSteps={activate.subSteps} />
+            </>
+          )}
+
+          {activate.manual && (activate.manual.base.length > 0 || activate.manual.detailed.length > 0) && (
+            <>
+              <SectionDivider label="Manual Installation" accent="#b45309" />
+              <StepList steps={activate.manual.base} />
+              <DetailedToggle steps={activate.manual.detailed} />
+            </>
+          )}
         </>
       )}
 
       {active === 'connect' && connect && (
         <>
-          <StepList steps={connect.base} />
-          <DetailedToggle steps={connect.detailed} />
+          {connect.base.length > 0 && (
+            <>
+              <SectionDivider label="Base Steps" accent="#0d9488" />
+              <StepList steps={connect.base} />
+            </>
+          )}
+
+          {connect.detailed.length > 0 && (
+            <>
+              <SectionDivider label="Detailed Steps" accent="#0891b2" />
+              <DetailedToggle steps={connect.detailed} />
+            </>
+          )}
         </>
       )}
     </div>
