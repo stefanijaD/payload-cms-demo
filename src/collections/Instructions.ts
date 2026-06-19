@@ -94,6 +94,35 @@ export const Instructions: CollectionConfig = {
           ],
         },
         {
+          name: 'apnSettings',
+          type: 'group',
+          admin: {
+            description:
+              'APN configuration steps shown to the user during activation. Available for both mobile and web app via the instruction-level platform field.',
+          },
+          fields: [
+            {
+              name: 'base',
+              dbName: 'act_apn_base',
+              type: 'array',
+              admin: {
+                description: 'Short/base APN settings steps shown during activation.',
+              },
+              fields: instructionStepBlocks,
+            },
+            {
+              name: 'detailed',
+              dbName: 'act_apn_detail',
+              type: 'array',
+              required: true,
+              admin: {
+                description: 'Detailed APN settings steps shown during activation.',
+              },
+              fields: instructionStepBlocks,
+            },
+          ],
+        },
+        {
           name: 'subSteps',
           dbName: 'act_substeps',
           type: 'array',

@@ -1,5 +1,6 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { interpolateText } from '@/lib/interpolate'
 
 type InstructionType = 'activate' | 'connect'
 
@@ -90,12 +91,22 @@ function normalizeStepList(items: any[] | null | undefined): NormalizedStep[] {
     return items.flatMap(normalizeStepItem)
 }
 
+function applyInterpolation(steps: NormalizedStep[], partnerName: string): NormalizedStep[] {
+    if (!partnerName) return steps
+    return steps.map((step) => ({
+        ...step,
+        name: interpolateText(step.name, partnerName),
+        description: interpolateText(step.description, partnerName),
+    }))
+}
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
 
     const phoneModel = searchParams.get('phoneModel')
     const type = searchParams.get('type') as InstructionType | null
     const locale = searchParams.get('locale') || 'en'
+    const partnerName = (searchParams.get('partnerName') ?? '').trim()
 
     if (!phoneModel) {
         return Response.json(
@@ -149,14 +160,18 @@ export async function GET(request: Request) {
         )
     }
 
+    // Normalize then apply {{partnerName}} interpolation to all step lists.
+    const interp = (items: any[] | null | undefined) =>
+        applyInterpolation(normalizeStepList(items), partnerName)
+
     if (type === 'activate') {
         const activate = instruction.activate
 
         const subSteps =
             activate?.subSteps?.map((subStep: any) => ({
                 key: subStep.key,
-                base: normalizeStepList(subStep.base),
-                detailed: normalizeStepList(subStep.detailed),
+                base: interp(subStep.base),
+                detailed: interp(subStep.detailed),
             })) ?? []
 
         return Response.json({
@@ -164,13 +179,17 @@ export async function GET(request: Request) {
             phoneModel: instruction.phoneModel,
             instructionType: instruction.instructionType,
             content: {
-                base: normalizeStepList(activate?.base),
-                detailed: normalizeStepList(activate?.detailed),
-                subSteps,
+                base: interp(activate?.base),
+                detailed: interp(activate?.detailed),
                 manualInstallation: {
-                    base: normalizeStepList(activate?.manualInstallation?.base),
-                    detailed: normalizeStepList(activate?.manualInstallation?.detailed),
+                    base: interp(activate?.manualInstallation?.base),
+                    detailed: interp(activate?.manualInstallation?.detailed),
                 },
+                apnSettings: {
+                    base: interp(activate?.apnSettings?.base),
+                    detailed: interp(activate?.apnSettings?.detailed),
+                },
+                subSteps,
             },
         })
     }
@@ -180,8 +199,8 @@ export async function GET(request: Request) {
         phoneModel: instruction.phoneModel,
         instructionType: instruction.instructionType,
         content: {
-            base: normalizeStepList(instruction.connect?.base),
-            detailed: normalizeStepList(instruction.connect?.detailed),
+            base: interp(instruction.connect?.base),
+            detailed: interp(instruction.connect?.detailed),
         },
     })
 }

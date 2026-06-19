@@ -150,6 +150,11 @@ async function ModelPage({ model, locale }: { model: string; locale: string }) {
     detailed: normalizeStepList((activate.activate as any)?.manualInstallation?.detailed),
   } : undefined
 
+  const activateApnSettings = activate ? {
+    base: normalizeStepList((activate.activate as any)?.apnSettings?.base),
+    detailed: normalizeStepList((activate.activate as any)?.apnSettings?.detailed),
+  } : undefined
+
   return (
     <div style={pageStyle}>
       <div style={innerStyle}>
@@ -170,6 +175,7 @@ async function ModelPage({ model, locale }: { model: string; locale: string }) {
             detailed: normalizeStepList(activate.activate?.detailed),
             subSteps: activateSubSteps,
             manual: activateManual,
+            apnSettings: activateApnSettings,
           } : undefined}
           connect={connect ? {
             base: normalizeStepList(connect.connect?.base),

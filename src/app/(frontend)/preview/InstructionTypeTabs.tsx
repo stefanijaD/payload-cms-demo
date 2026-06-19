@@ -11,6 +11,7 @@ type Props = {
     detailed: NormalizedStep[]
     subSteps: NormalizedSubStep[]
     manual?: { base: NormalizedStep[]; detailed: NormalizedStep[] }
+    apnSettings?: { base: NormalizedStep[]; detailed: NormalizedStep[] }
   }
   connect?: { base: NormalizedStep[]; detailed: NormalizedStep[] }
 }
@@ -97,6 +98,14 @@ export function InstructionTypeTabs({ activate, connect }: Props) {
               <SectionDivider label="Manual Installation" accent="#b45309" />
               <StepList steps={activate.manual.base} />
               <DetailedToggle steps={activate.manual.detailed} />
+            </>
+          )}
+
+          {activate.apnSettings && (activate.apnSettings.base.length > 0 || activate.apnSettings.detailed.length > 0) && (
+            <>
+              <SectionDivider label="APN Settings" accent="#0f766e" />
+              <StepList steps={activate.apnSettings.base} />
+              <DetailedToggle steps={activate.apnSettings.detailed} />
             </>
           )}
         </>

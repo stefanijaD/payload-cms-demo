@@ -306,6 +306,69 @@ export interface Instruction {
         | null;
     };
     /**
+     * APN configuration steps shown to the user during activation. Available for both mobile and web app via the instruction-level platform field.
+     */
+    apnSettings: {
+      /**
+       * Short/base APN settings steps shown during activation.
+       */
+      base?:
+        | {
+            source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+            inline?: {
+              /**
+               * Optional step title/name.
+               */
+              name?: string | null;
+              description: string;
+              /**
+               * Enable to set a different image/video per locale.
+               */
+              mediaTranslatable?: boolean | null;
+              /**
+               * Optional image, GIF, or video (same for all locales).
+               */
+              media?: (number | null) | Media;
+              /**
+               * Optional image, GIF, or video — set per locale.
+               */
+              mediaLocalized?: (number | null) | Media;
+            };
+            sharedStep?: (number | null) | SharedStep;
+            sharedStepGroup?: (number | null) | SharedStepGroup;
+            id?: string | null;
+          }[]
+        | null;
+      /**
+       * Detailed APN settings steps shown during activation.
+       */
+      detailed: {
+        source: 'inline' | 'sharedStep' | 'sharedStepGroup';
+        inline?: {
+          /**
+           * Optional step title/name.
+           */
+          name?: string | null;
+          description: string;
+          /**
+           * Enable to set a different image/video per locale.
+           */
+          mediaTranslatable?: boolean | null;
+          /**
+           * Optional image, GIF, or video (same for all locales).
+           */
+          media?: (number | null) | Media;
+          /**
+           * Optional image, GIF, or video — set per locale.
+           */
+          mediaLocalized?: (number | null) | Media;
+        };
+        sharedStep?: (number | null) | SharedStep;
+        sharedStepGroup?: (number | null) | SharedStepGroup;
+        id?: string | null;
+      }[];
+    };
+    /**
      * Add one item for each activate substep.
      */
     subSteps: {
@@ -661,6 +724,44 @@ export interface InstructionsSelect<T extends boolean = true> {
               id?: T;
             };
         manualInstallation?:
+          | T
+          | {
+              base?:
+                | T
+                | {
+                    source?: T;
+                    inline?:
+                      | T
+                      | {
+                          name?: T;
+                          description?: T;
+                          mediaTranslatable?: T;
+                          media?: T;
+                          mediaLocalized?: T;
+                        };
+                    sharedStep?: T;
+                    sharedStepGroup?: T;
+                    id?: T;
+                  };
+              detailed?:
+                | T
+                | {
+                    source?: T;
+                    inline?:
+                      | T
+                      | {
+                          name?: T;
+                          description?: T;
+                          mediaTranslatable?: T;
+                          media?: T;
+                          mediaLocalized?: T;
+                        };
+                    sharedStep?: T;
+                    sharedStepGroup?: T;
+                    id?: T;
+                  };
+            };
+        apnSettings?:
           | T
           | {
               base?:
